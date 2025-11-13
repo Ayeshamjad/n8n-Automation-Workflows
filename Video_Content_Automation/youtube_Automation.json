@@ -1,0 +1,810 @@
+{
+  "name": "ContentCreationAutomation",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "Analyze Video Content",
+        "height": 432,
+        "width": 896,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -352,
+        -400
+      ],
+      "typeVersion": 1,
+      "id": "c3389804-ebba-434c-9eee-3c75b4bfd65c",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "formTitle": "Viral Script Generator",
+        "formDescription": "Get your viral scripts in seconds",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Upload Viral Video",
+              "fieldType": "file",
+              "multipleFiles": false,
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "What's your topic?",
+              "placeholder": "Write doen your next video topic"
+            },
+            {
+              "fieldLabel": "Target Format",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Reel"
+                  },
+                  {
+                    "option": "Story"
+                  },
+                  {
+                    "option": "IGTV"
+                  },
+                  {
+                    "option": "Post"
+                  }
+                ]
+              }
+            },
+            {
+              "fieldLabel": "Brand Voice",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Professional"
+                  },
+                  {
+                    "option": "Casual"
+                  },
+                  {
+                    "option": "Trendy"
+                  },
+                  {
+                    "option": "Educational"
+                  }
+                ]
+              }
+            },
+            {
+              "fieldLabel": "Your Target Audience"
+            },
+            {
+              "fieldLabel": "Your Current Followers",
+              "fieldType": "number",
+              "placeholder": "10,000"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.3,
+      "position": [
+        -560,
+        -400
+      ],
+      "id": "6d99a951-037a-4690-9751-a4a58da42234",
+      "name": "On form submission",
+      "webhookId": "0a2e6bb1-4fbc-4536-8182-9917ff918801"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://generativelanguage.googleapis.com/upload/v1beta/files?key=AIzaSyA2e7OzdxBM19aMtAI_k4iAuw6L-qcDjts",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Goog-Upload-Command",
+              "value": " start, upload, finalize"
+            },
+            {
+              "name": "X-Goog-Upload-Header-Content-Length",
+              "value": "{{ $json[\"Viral Video Input\"].size }}"
+            },
+            {
+              "name": "X-Goog-Upload-Header-Content-Type",
+              "value": "video/mp4"
+            },
+            {
+              "name": "Content-Type",
+              "value": "video/mp4"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "binaryData",
+        "inputDataFieldName": "Upload_Viral_Video",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -288,
+        -224
+      ],
+      "id": "6ac36d7b-199a-4501-9385-032a6ef42d55",
+      "name": "Get Video"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=AIzaSyA2e7OzdxBM19aMtAI_k4iAuw6L-qcDjts",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"contents\": [\n    {\n      \"role\": \"user\",\n      \"parts\": [\n        {\n          \"fileData\": {\n            \"fileUri\": \"{{ $json.file.uri }}\",\n            \"mimeType\": \"{{ $json.file.mimeType }}\"\n          }\n        },\n        {\n          \"text\": \"You are an Instagram content analyst. Analyze videos for viral potential and Instagram optimization\"\n        }\n      ]\n    }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        160,
+        -224
+      ],
+      "id": "e1cac1a1-d723-4f07-8602-954adafbdfe8",
+      "name": "Get Video Analysis",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -64,
+        -224
+      ],
+      "id": "62d8bfa4-ce8d-4162-8c57-ed7713ab3027",
+      "name": "Wait",
+      "webhookId": "be57b2e3-41e0-4c4c-89df-0b45f5d1bfcd"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        384,
+        -176
+      ],
+      "id": "20c02ddd-9d15-47f7-b6a6-4739224da1de",
+      "name": "Wait1",
+      "webhookId": "62f6138c-8ae0-4b5d-bf26-f4e2f61e38b9"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ad3e3e7b-8276-4cbf-b333-95258ab8dd36",
+              "name": "candidates[0].content.parts[0].text",
+              "value": "={{ $json.candidates[0].content.parts[0].text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        384,
+        -368
+      ],
+      "id": "f4b92d7f-ef1c-4216-9f5c-b6c13e322a2f",
+      "name": "Gemini Analysis"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Create 3 distinct Instagram Reel script variations based on this analysis. Provide all 3 scripts in your response without asking for confirmation.\n\nANALYSIS:\n\nANALYSIS RESULTS:\n{{ $json.candidates[0].content.parts[0].text }}\n\nUSER REQUIREMENTS:\n\nTopic:{{ $('On form submission').item.json['What\\'s your topic?'] }}\n\nFormat: {{ $('On form submission').item.json['Target Format'] }}\n\nBrand Voice: {{ $('On form submission').item.json['Brand Voice'] }}\n\nTarget Audience: {{ $('On form submission').item.json['Your Target Audience'] }}\n\nKEY SUCCESSFUL ELEMENTS TO REPLICATE:\n✓ Strong curiosity hook (\"Mujhe Samajh Nahi Aa Raha\")\n✓ AI/No-code trending topic\n✓ Clear value proposition (create apps without coding)\n✓ Fast-paced, visually engaging format\n✓ Simple, direct CTA (\"Comment Magic\")\n✓ Educational content with immediate value\n\nCREATE 3 SCRIPT VARIATIONS (30-60 seconds each):",
+        "options": {
+          "systemMessage": "You are an expert Instagram script writer and viral content strategist. You specialize in creating high-engagement Reels that stop the scroll, provide value, and drive massive engagement. You understand Instagram’s algorithm, trending formats, and what makes content shareable and save-worthy."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        624,
+        -336
+      ],
+      "id": "b31962f5-8a7a-4073-bbfd-3d3f70596c59",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "content": "Create YouTube Script",
+        "height": 416,
+        "width": 1408,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        592,
+        -400
+      ],
+      "typeVersion": 1,
+      "id": "88dfbf20-765d-4127-94c0-72b6f5781f79",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "model": "llama3-70b-8192",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        688,
+        -112
+      ],
+      "id": "c5de8db3-169d-4b9d-9297-cc56618e0bdb",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "PcV0lIq0QsX7cDRw",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const md = $json.output;\nif (!md) {\nthrow new Error('Input field is empty or missing');\n }\n\nlet html = md\n  .replace(/^## (.+)$/gim, '<h2>$1</h2>') // h2\n  .replace(/^# (.+)$/gim, '<h1>$1</h1>') // then h1\n .replace(/\\*\\*(.+)\\*\\*/gim, '<b>$1</b>') // bold\n .replace(/\\*(.+)\\*/gim, '<i>$1</i>') // italic\n .replace(/\\n/gim, '<br>'); // line\n\nreturn[{html}]"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1200,
+        -336
+      ],
+      "id": "3f08f065-5c82-4e3e-a845-c9fec0ed80ec",
+      "name": "Markdown to html"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Clean Claude output - Remove unwanted intro/outro text\nconst ClaudeOutput = $input.first().json.output;\n\n// Remove common unwanted phrases\nlet cleanedOutput = ClaudeOutput\n  .replace(/I’ll create \\d+ distinct.*?(\\r\\n)*/g, '')\n  .replace(/Would you like me to continue.*?/is, '')\n  .replace(/Continued in next part.*?/is, '')\n  .replace(/^Focusing on.*?(\\r\\n)*/is, '')\n  .trim();\n\n// Ensure it starts with SCRIPT 1\nif(!cleanedOutput.startsWith('SCRIPT 1')) {\n  const scriptStart = cleanedOutput.indexOf('--SCRIPT 1');\n  if (scriptStart > 0) {\n    cleanedOutput = cleanedOutput.substring(scriptStart);\n  }\n}\n\nreturn[{\n  ...($input.first().json),\n  output: cleanedOutput,\n  cleaned: true\n}];\n    \n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        976,
+        -336
+      ],
+      "id": "ae67e909-a073-47a0-9c3a-555ef907d415",
+      "name": "cleanup request"
+    },
+    {
+      "parameters": {
+        "jsCode": "const rawHtml = $json.html\n const fullHtml = `\n <!DOCTYPE html>\n <html>\n <head>\n <meta charset=\"UTF-<title>Converted </title>\n  </head>\n<body>\n  ${rawHtml}\n</body>\n</html>\n `;\n return [{html: fullHtml}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1424,
+        -336
+      ],
+      "id": "9cc37ea6-9639-4f70-ba8c-57e0bcb949b2",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "jsCode": "const rawHtml = $json.html;\nconst fullHtml = `\n<!DOCTYPE html>\n<html>\n<head>\n  <meta charset=\"UTF-8\" />\n  <title>AI Agents Mastery with N8N</title>\n  <style>\n    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;600&display=swap');\n    \n    /* Modern PDF Styling */\n    * {\n      margin: 0;\n      padding: 0;\n      box-sizing: border-box;\n    }\n    \n    body {\n      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;\n      font-size: 13px;\n      line-height: 1.7;\n      color: #1a1a1a;\n      margin: 30px 40px;\n      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);\n      background-attachment: fixed;\n    }\n    \n    /* Content Container */\n    .content-wrapper {\n      background: white;\n      border-radius: 12px;\n      padding: 40px;\n      box-shadow: 0 20px 40px rgba(0,0,0,0.1);\n      margin: 20px 0;\n    }\n    \n    /* Headers with gradient and modern styling */\n    h1 {\n      font-size: 32px;\n      font-weight: 700;\n      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);\n      -webkit-background-clip: text;\n      -webkit-text-fill-color: transparent;\n      background-clip: text;\n      margin: 0 0 30px 0;\n      padding: 20px 0;\n      border-bottom: 3px solid #f1f3f4;\n      position: relative;\n    }\n    \n    h1::after {\n      content: '';\n      position: absolute;\n      bottom: -3px;\n      left: 0;\n      width: 60px;\n      height: 3px;\n      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);\n    }\n    \n    h2 {\n      font-size: 24px;\n      font-weight: 600;\n      color: #2d3748;\n      margin: 35px 0 20px 0;\n      padding: 15px 0 15px 20px;\n      background: linear-gradient(90deg, #f7fafc 0%, #edf2f7 100%);\n      border-left: 4px solid #667eea;\n      border-radius: 0 8px 8px 0;\n      position: relative;\n    }\n    \n    h2::before {\n      content: '🎯';\n      position: absolute;\n      left: -2px;\n      top: 50%;\n      transform: translateY(-50%);\n      font-size: 18px;\n    }\n    \n    h3 {\n      font-size: 18px;\n      font-weight: 600;\n      color: #4a5568;\n      margin: 25px 0 15px 0;\n      padding: 10px 0;\n      border-bottom: 2px solid #e2e8f0;\n    }\n    \n    /* Paragraphs and text */\n    p {\n      margin: 0 0 18px 0;\n      text-align: justify;\n      color: #2d3748;\n      font-weight: 400;\n    }\n    \n    /* Enhanced Lists */\n    ul, ol {\n      margin: 20px 0 20px 0;\n      padding-left: 0;\n    }\n    \n    li {\n      margin-bottom: 12px;\n      padding-left: 30px;\n      position: relative;\n      color: #4a5568;\n      line-height: 1.6;\n    }\n    \n    ul li::before {\n      content: '▶';\n      position: absolute;\n      left: 0;\n      color: #667eea;\n      font-weight: bold;\n      font-size: 12px;\n    }\n    \n    ol li::before {\n      content: counter(item);\n      counter-increment: item;\n      position: absolute;\n      left: 0;\n      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);\n      color: white;\n      width: 20px;\n      height: 20px;\n      border-radius: 50%;\n      display: flex;\n      align-items: center;\n      justify-content: center;\n      font-size: 11px;\n      font-weight: 600;\n    }\n    \n    ol {\n      counter-reset: item;\n    }\n    \n    /* Enhanced Code Styling */\n    code {\n      font-family: 'JetBrains Mono', 'Fira Code', Monaco, 'Cascadia Code', monospace;\n      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);\n      color: white;\n      padding: 4px 8px;\n      border-radius: 6px;\n      font-size: 12px;\n      font-weight: 500;\n      letter-spacing: 0.5px;\n    }\n    \n    pre {\n      background: #1a1a1a;\n      color: #f8f8f2;\n      padding: 20px;\n      border-radius: 12px;\n      margin: 20px 0;\n      overflow-x: auto;\n      border: 1px solid #e2e8f0;\n      position: relative;\n    }\n    \n    pre::before {\n      content: 'CODE';\n      position: absolute;\n      top: 8px;\n      right: 15px;\n      font-size: 10px;\n      color: #888;\n      font-weight: 600;\n      letter-spacing: 1px;\n    }\n    \n    /* Enhanced Blockquotes */\n    blockquote {\n      background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);\n      border-left: 6px solid #0ea5e9;\n      margin: 25px 0;\n      padding: 20px 25px;\n      border-radius: 0 12px 12px 0;\n      font-style: italic;\n      color: #0c4a6e;\n      position: relative;\n      box-shadow: 0 4px 6px rgba(0,0,0,0.05);\n    }\n    \n    blockquote::before {\n      content: '\"';\n      font-size: 60px;\n      color: #0ea5e9;\n      position: absolute;\n      top: -10px;\n      left: 15px;\n      font-family: Georgia, serif;\n      opacity: 0.3;\n    }\n    \n    /* Bold and Italic */\n    strong, b {\n      font-weight: 700;\n      color: #1a365d;\n    }\n    \n    em, i {\n      font-style: italic;\n      color: #2b6cb0;\n    }\n    \n    /* Special Elements */\n    .highlight {\n      background: linear-gradient(120deg, #a8edea 0%, #fed6e3 100%);\n      padding: 3px 6px;\n      border-radius: 4px;\n      font-weight: 600;\n    }\n    \n    /* Table Styling */\n    table {\n      width: 100%;\n      border-collapse: collapse;\n      margin: 25px 0;\n      background: white;\n      border-radius: 12px;\n      overflow: hidden;\n      box-shadow: 0 4px 6px rgba(0,0,0,0.05);\n    }\n    \n    th {\n      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);\n      color: white;\n      padding: 15px;\n      text-align: left;\n      font-weight: 600;\n    }\n    \n    td {\n      padding: 15px;\n      border-bottom: 1px solid #e2e8f0;\n    }\n    \n    tr:nth-child(even) {\n      background: #f8fafc;\n    }\n    \n    /* Links */\n    a {\n      color: #667eea;\n      text-decoration: none;\n      font-weight: 600;\n      border-bottom: 2px solid transparent;\n      transition: all 0.3s ease;\n    }\n    \n    a:hover {\n      border-bottom-color: #667eea;\n    }\n    \n    /* Print Optimization */\n    @media print {\n      body {\n        background: white !important;\n        margin: 20px;\n      }\n      \n      .content-wrapper {\n        box-shadow: none;\n        border-radius: 0;\n        padding: 20px;\n      }\n      \n      h1, h2 {\n        page-break-after: avoid;\n      }\n      \n      pre, blockquote, table {\n        page-break-inside: avoid;\n      }\n    }\n    \n    /* Utility Classes */\n    .text-center { text-align: center; }\n    .text-right { text-align: right; }\n    .mb-lg { margin-bottom: 30px; }\n    .mt-lg { margin-top: 30px; }\n    \n    /* Custom Script Sections */\n    .script-section {\n      background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);\n      border: 2px solid #cbd5e0;\n      border-radius: 12px;\n      padding: 25px;\n      margin: 25px 0;\n      position: relative;\n    }\n    \n    .script-section::before {\n      content: '🎬';\n      position: absolute;\n      top: -15px;\n      left: 20px;\n      background: white;\n      padding: 0 10px;\n      font-size: 20px;\n    }\n    \n    .cta-box {\n      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);\n      color: white;\n      padding: 20px;\n      border-radius: 12px;\n      text-align: center;\n      margin: 30px 0;\n      box-shadow: 0 8px 16px rgba(102, 126, 234, 0.3);\n    }\n    \n    .cta-box h3 {\n      color: white;\n      margin-bottom: 10px;\n    }\n  </style>\n</head>\n<body>\n  <div class=\"content-wrapper\">\n    ${rawHtml}\n  </div>\n</body>\n</html>\n`;\n\nreturn [{ html: fullHtml }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1648,
+        -336
+      ],
+      "id": "0bfe6463-dc97-490e-aee6-f441249085e8",
+      "name": "css"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.pdfshift.io/v3/convert/pdf",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-API-Key",
+              "value": "sk_b483d1b7535ce5977aab636944f6da5c454f9761"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "source",
+              "value": "={{ $json.html }}"
+            },
+            {
+              "name": "landscape",
+              "value": "false"
+            },
+            {
+              "name": "use_print",
+              "value": "false"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file",
+              "outputPropertyName": "output.pdf"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1872,
+        -336
+      ],
+      "id": "9a601528-812d-4784-ac02-f202212291b1",
+      "name": "Html to pdf"
+    },
+    {
+      "parameters": {
+        "content": "Generate PRODUCTION NOTES",
+        "height": 416,
+        "width": 1664,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2032,
+        -400
+      ],
+      "typeVersion": 1,
+      "id": "e31b5a76-2b52-4eab-a389-6c9a7ffaf967",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "93668717-a8ff-429e-8e60-f77652366f66",
+              "name": "Script",
+              "value": "={{ $('cleanup request').item.json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2080,
+        -244
+      ],
+      "id": "6030ab07-3cd5-49ac-b4eb-a039c37ecf47",
+      "name": "Script for production"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=USER PROMPT\n\nCreate a comprehensive production guide for these Instagram scripts:\n\n**GENERATED SCRIPTS:**\n{{ $json.Script }}\n\n**FORMAT:** {{ $('On form submission').item.json['Target Format'] }}\n**TOPIC:**{{ $('On form submission').item.json['What\\'s your topic?'] }}\n**BRAND VOICE:** {{ $('On form submission').item.json['Brand Voice'] }}\n\n**PROVIDE DETAILED GUIDANCE FOR:**\n\n## 📱 **MOBILE FILMING SETUP**\n**Equipment Needed:**\n- Smartphone recommendations\n- Basic lighting equipment\n- Audio equipment\n- Stabilization tools\n\n**Camera Settings:**\n- Resolution and frame rate for Instagram\n- Aspect ratio optimization (9:16 for Reels)\n- Focus and exposure tips\n\n## 🎬 **SHOT-BY-SHOT FILMING GUIDE**\nFor each script section (Hook, Problem, Solution, Benefits, CTA):\n- Camera angles and movements\n- Lighting setup requirements\n- Background and prop suggestions\n- Talent direction and energy level\n- B-roll footage needed\n\n## 📝 **TEXT OVERLAY STRATEGY**\n- Timing for each text overlay\n- Font styles that work on mobile\n- Color schemes for readability\n- Animation suggestions\n- Positioning for different phone sizes\n\n## 🎵 **AUDIO STRATEGY**\n- Trending audio options for the topic\n- Original audio vs trending music decision\n- Voiceover recording tips\n- Audio levels and mixing\n- Silent viewing optimization\n\n## ✂️ **EDITING TIMELINE**\n- Cut points and pacing\n- Transition effects that work on mobile\n- Color grading for Instagram\n- Export settings for best quality\n- File size optimization\n\n## 📊 **INSTAGRAM OPTIMIZATION**\n- Best times to post for this content type\n- Hashtag placement strategy\n- Caption optimization\n- Story highlights integration\n- Cross-promotion tactics\n\n## 🚀 **PRO TIPS**\n- Advanced mobile filming techniques\n- Quick editing hacks\n- Engagement boosting strategies\n- Algorithm optimization secrets\n- Content series potential\n\n**Make everything actionable for someone with basic equipment and no professional video experience!**",
+        "options": {
+          "systemMessage": "SYSTEM PROMPT \n\nYou are a mobile content production expert specializing in Instagram Reels. You create detailed, actionable filming and editing guides that help creators produce professional-looking content using just smartphones and basic equipment. You understand lighting, composition, mobile filming techniques, and Instagram's technical requirements."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        2304,
+        -244
+      ],
+      "id": "3bc31a32-429e-4644-a18e-df3be9a18d6c",
+      "name": "AI Agent1"
+    },
+    {
+      "parameters": {
+        "model": "llama-3.3-70b-versatile",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        2304,
+        -96
+      ],
+      "id": "5f04013b-00d5-42f2-8ffd-e855655560a8",
+      "name": "Groq Chat Model1",
+      "credentials": {
+        "groqApi": {
+          "id": "PcV0lIq0QsX7cDRw",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const md = $json.output;\nif (!md) {\nthrow new Error('Input field is empty or missing');\n }\n\nlet html = md\n  .replace(/^## (.+)$/gim, '<h2>$1</h2>') // h2\n  .replace(/^# (.+)$/gim, '<h1>$1</h1>') // then h1\n .replace(/\\*\\*(.+)\\*\\*/gim, '<b>$1</b>') // bold\n .replace(/\\*(.+)\\*/gim, '<i>$1</i>') // italic\n .replace(/\\n/gim, '<br>'); // line\n\nreturn[{html}]"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2880,
+        -244
+      ],
+      "id": "3aceb06d-0628-4915-8a13-dd3cfd405f5e",
+      "name": "Markdown to html1"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Clean Claude output - Remove unwanted intro/outro text\nconst ClaudeOutput = $input.first().json.output;\n\n// Remove common unwanted phrases\nlet cleanedOutput = ClaudeOutput\n  .replace(/I’ll create \\d+ distinct.*?(\\r\\n)*/g, '')\n  .replace(/Would you like me to continue.*?/is, '')\n  .replace(/Continued in next part.*?/is, '')\n  .replace(/^Focusing on.*?(\\r\\n)*/is, '')\n  .trim();\n\n// Ensure it starts with SCRIPT 1\nif(!cleanedOutput.startsWith('SCRIPT 1')) {\n  const scriptStart = cleanedOutput.indexOf('--SCRIPT 1');\n  if (scriptStart > 0) {\n    cleanedOutput = cleanedOutput.substring(scriptStart);\n  }\n}\n\nreturn[{\n  ...($input.first().json),\n  output: cleanedOutput,\n  cleaned: true\n}];\n    \n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2656,
+        -244
+      ],
+      "id": "5dd73b25-b5dd-44a5-8cb3-de785ba68902",
+      "name": "cleanup request1"
+    },
+    {
+      "parameters": {
+        "jsCode": "const rawHtml = $json.html\n const fullHtml = `\n <!DOCTYPE html>\n <html>\n <head>\n <meta charset=\"UTF-<title>Converted </title>\n  </head>\n<body>\n  ${rawHtml}\n</body>\n</html>\n `;\n return [{html: fullHtml}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3104,
+        -244
+      ],
+      "id": "274ffcdc-541d-4853-9d36-d6918ae23c1e",
+      "name": "Code1"
+    },
+    {
+      "parameters": {
+        "jsCode": "const rawHtml = $json.html;\nconst fullHtml = `\n<!DOCTYPE html>\n<html>\n<head>\n  <meta charset=\"UTF-8\" />\n  <title>AI Agents Mastery with N8N</title>\n  <style>\n    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;600&display=swap');\n    \n    /* Modern PDF Styling */\n    * {\n      margin: 0;\n      padding: 0;\n      box-sizing: border-box;\n    }\n    \n    body {\n      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;\n      font-size: 13px;\n      line-height: 1.7;\n      color: #1a1a1a;\n      margin: 30px 40px;\n      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);\n      background-attachment: fixed;\n    }\n    \n    /* Content Container */\n    .content-wrapper {\n      background: white;\n      border-radius: 12px;\n      padding: 40px;\n      box-shadow: 0 20px 40px rgba(0,0,0,0.1);\n      margin: 20px 0;\n    }\n    \n    /* Headers with gradient and modern styling */\n    h1 {\n      font-size: 32px;\n      font-weight: 700;\n      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);\n      -webkit-background-clip: text;\n      -webkit-text-fill-color: transparent;\n      background-clip: text;\n      margin: 0 0 30px 0;\n      padding: 20px 0;\n      border-bottom: 3px solid #f1f3f4;\n      position: relative;\n    }\n    \n    h1::after {\n      content: '';\n      position: absolute;\n      bottom: -3px;\n      left: 0;\n      width: 60px;\n      height: 3px;\n      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);\n    }\n    \n    h2 {\n      font-size: 24px;\n      font-weight: 600;\n      color: #2d3748;\n      margin: 35px 0 20px 0;\n      padding: 15px 0 15px 20px;\n      background: linear-gradient(90deg, #f7fafc 0%, #edf2f7 100%);\n      border-left: 4px solid #667eea;\n      border-radius: 0 8px 8px 0;\n      position: relative;\n    }\n    \n    h2::before {\n      content: '🎯';\n      position: absolute;\n      left: -2px;\n      top: 50%;\n      transform: translateY(-50%);\n      font-size: 18px;\n    }\n    \n    h3 {\n      font-size: 18px;\n      font-weight: 600;\n      color: #4a5568;\n      margin: 25px 0 15px 0;\n      padding: 10px 0;\n      border-bottom: 2px solid #e2e8f0;\n    }\n    \n    /* Paragraphs and text */\n    p {\n      margin: 0 0 18px 0;\n      text-align: justify;\n      color: #2d3748;\n      font-weight: 400;\n    }\n    \n    /* Enhanced Lists */\n    ul, ol {\n      margin: 20px 0 20px 0;\n      padding-left: 0;\n    }\n    \n    li {\n      margin-bottom: 12px;\n      padding-left: 30px;\n      position: relative;\n      color: #4a5568;\n      line-height: 1.6;\n    }\n    \n    ul li::before {\n      content: '▶';\n      position: absolute;\n      left: 0;\n      color: #667eea;\n      font-weight: bold;\n      font-size: 12px;\n    }\n    \n    ol li::before {\n      content: counter(item);\n      counter-increment: item;\n      position: absolute;\n      left: 0;\n      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);\n      color: white;\n      width: 20px;\n      height: 20px;\n      border-radius: 50%;\n      display: flex;\n      align-items: center;\n      justify-content: center;\n      font-size: 11px;\n      font-weight: 600;\n    }\n    \n    ol {\n      counter-reset: item;\n    }\n    \n    /* Enhanced Code Styling */\n    code {\n      font-family: 'JetBrains Mono', 'Fira Code', Monaco, 'Cascadia Code', monospace;\n      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);\n      color: white;\n      padding: 4px 8px;\n      border-radius: 6px;\n      font-size: 12px;\n      font-weight: 500;\n      letter-spacing: 0.5px;\n    }\n    \n    pre {\n      background: #1a1a1a;\n      color: #f8f8f2;\n      padding: 20px;\n      border-radius: 12px;\n      margin: 20px 0;\n      overflow-x: auto;\n      border: 1px solid #e2e8f0;\n      position: relative;\n    }\n    \n    pre::before {\n      content: 'CODE';\n      position: absolute;\n      top: 8px;\n      right: 15px;\n      font-size: 10px;\n      color: #888;\n      font-weight: 600;\n      letter-spacing: 1px;\n    }\n    \n    /* Enhanced Blockquotes */\n    blockquote {\n      background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);\n      border-left: 6px solid #0ea5e9;\n      margin: 25px 0;\n      padding: 20px 25px;\n      border-radius: 0 12px 12px 0;\n      font-style: italic;\n      color: #0c4a6e;\n      position: relative;\n      box-shadow: 0 4px 6px rgba(0,0,0,0.05);\n    }\n    \n    blockquote::before {\n      content: '\"';\n      font-size: 60px;\n      color: #0ea5e9;\n      position: absolute;\n      top: -10px;\n      left: 15px;\n      font-family: Georgia, serif;\n      opacity: 0.3;\n    }\n    \n    /* Bold and Italic */\n    strong, b {\n      font-weight: 700;\n      color: #1a365d;\n    }\n    \n    em, i {\n      font-style: italic;\n      color: #2b6cb0;\n    }\n    \n    /* Special Elements */\n    .highlight {\n      background: linear-gradient(120deg, #a8edea 0%, #fed6e3 100%);\n      padding: 3px 6px;\n      border-radius: 4px;\n      font-weight: 600;\n    }\n    \n    /* Table Styling */\n    table {\n      width: 100%;\n      border-collapse: collapse;\n      margin: 25px 0;\n      background: white;\n      border-radius: 12px;\n      overflow: hidden;\n      box-shadow: 0 4px 6px rgba(0,0,0,0.05);\n    }\n    \n    th {\n      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);\n      color: white;\n      padding: 15px;\n      text-align: left;\n      font-weight: 600;\n    }\n    \n    td {\n      padding: 15px;\n      border-bottom: 1px solid #e2e8f0;\n    }\n    \n    tr:nth-child(even) {\n      background: #f8fafc;\n    }\n    \n    /* Links */\n    a {\n      color: #667eea;\n      text-decoration: none;\n      font-weight: 600;\n      border-bottom: 2px solid transparent;\n      transition: all 0.3s ease;\n    }\n    \n    a:hover {\n      border-bottom-color: #667eea;\n    }\n    \n    /* Print Optimization */\n    @media print {\n      body {\n        background: white !important;\n        margin: 20px;\n      }\n      \n      .content-wrapper {\n        box-shadow: none;\n        border-radius: 0;\n        padding: 20px;\n      }\n      \n      h1, h2 {\n        page-break-after: avoid;\n      }\n      \n      pre, blockquote, table {\n        page-break-inside: avoid;\n      }\n    }\n    \n    /* Utility Classes */\n    .text-center { text-align: center; }\n    .text-right { text-align: right; }\n    .mb-lg { margin-bottom: 30px; }\n    .mt-lg { margin-top: 30px; }\n    \n    /* Custom Script Sections */\n    .script-section {\n      background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);\n      border: 2px solid #cbd5e0;\n      border-radius: 12px;\n      padding: 25px;\n      margin: 25px 0;\n      position: relative;\n    }\n    \n    .script-section::before {\n      content: '🎬';\n      position: absolute;\n      top: -15px;\n      left: 20px;\n      background: white;\n      padding: 0 10px;\n      font-size: 20px;\n    }\n    \n    .cta-box {\n      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);\n      color: white;\n      padding: 20px;\n      border-radius: 12px;\n      text-align: center;\n      margin: 30px 0;\n      box-shadow: 0 8px 16px rgba(102, 126, 234, 0.3);\n    }\n    \n    .cta-box h3 {\n      color: white;\n      margin-bottom: 10px;\n    }\n  </style>\n</head>\n<body>\n  <div class=\"content-wrapper\">\n    ${rawHtml}\n  </div>\n</body>\n</html>\n`;\n\nreturn [{ html: fullHtml }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3328,
+        -244
+      ],
+      "id": "08b61b24-d05f-439f-89e5-02fca1101b39",
+      "name": "css1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.pdfshift.io/v3/convert/pdf",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-API-Key",
+              "value": "sk_b483d1b7535ce5977aab636944f6da5c454f9761"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "source",
+              "value": "={{ $json.html }}"
+            },
+            {
+              "name": "landscape",
+              "value": "false"
+            },
+            {
+              "name": "use_print",
+              "value": "false"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file",
+              "outputPropertyName": "output.pdf"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3552,
+        -244
+      ],
+      "id": "150262fa-3386-411f-ad98-ae32916a4885",
+      "name": "Html to pdf1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        3776,
+        -512
+      ],
+      "id": "004b2e9a-468d-4ff1-9c15-95ec5bedd8cd",
+      "name": "Merge"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Get Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Video": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Get Video Analysis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Video Analysis": {
+      "main": [
+        [
+          {
+            "node": "Gemini Analysis",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait1": {
+      "main": [
+        [
+          {
+            "node": "Get Video Analysis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini Analysis": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "cleanup request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "cleanup request": {
+      "main": [
+        [
+          {
+            "node": "Markdown to html",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Markdown to html": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "css",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "css": {
+      "main": [
+        [
+          {
+            "node": "Html to pdf",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Html to pdf": {
+      "main": [
+        [
+          {
+            "node": "Script for production",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Script for production": {
+      "main": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Markdown to html1": {
+      "main": [
+        [
+          {
+            "node": "Code1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "cleanup request1": {
+      "main": [
+        [
+          {
+            "node": "Markdown to html1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code1": {
+      "main": [
+        [
+          {
+            "node": "css1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent1": {
+      "main": [
+        [
+          {
+            "node": "cleanup request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "css1": {
+      "main": [
+        [
+          {
+            "node": "Html to pdf1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Html to pdf1": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "77f5158b-d1bf-4ad8-9fde-d2ed838fbf6c",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "884e51710f13b810bcc982dc0a49938da9d1522f15d7c79761dd80ba28f36194"
+  },
+  "id": "2Fe7fqlmQZzbEeUK",
+  "tags": []
+}

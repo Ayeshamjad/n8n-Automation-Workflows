@@ -1,0 +1,353 @@
+{
+  "name": "Voice Workflows",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -176,
+        -400
+      ],
+      "id": "f9487ad6-2d9e-4110-bca8-9cb883862498",
+      "name": "Telegram Trigger",
+      "webhookId": "0eeb79e9-ac6d-4c21-bb6d-690248973e2d"
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "fileId": "={{ $json.message.voice.file_id }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -32,
+        -400
+      ],
+      "id": "636337b5-36d0-4475-b9f2-174d394ab1b6",
+      "name": "Get a file",
+      "webhookId": "0f77dfc6-55fe-49e7-9a7b-f125daae26ef"
+    },
+    {
+      "parameters": {
+        "resource": "speech",
+        "operation": "speechToText"
+      },
+      "type": "@elevenlabs/n8n-nodes-preview-elevenlabs.elevenLabs",
+      "typeVersion": 1,
+      "position": [
+        112,
+        -400
+      ],
+      "id": "db555fec-af51-4f41-b177-fdef84d17852",
+      "name": "Transcribe audio or video",
+      "credentials": {}
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.text }}",
+        "options": {
+          "systemMessage": "You are a helpful assistant who is extremely funny."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        256,
+        -400
+      ],
+      "id": "44bb0ae2-c605-4e3a-8431-502fc46be3e0",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        272,
+        -256
+      ],
+      "id": "8564d62d-a909-4775-b0d9-656df1c5dbb3",
+      "name": "OpenRouter Chat Model"
+    },
+    {
+      "parameters": {
+        "resource": "speech",
+        "operation": "textToSpeech"
+      },
+      "type": "@elevenlabs/n8n-nodes-preview-elevenlabs.elevenLabs",
+      "typeVersion": 1,
+      "position": [
+        560,
+        -400
+      ],
+      "id": "01d10360-9552-44ab-983f-a84f70de8d73",
+      "name": "Convert text to speech",
+      "credentials": {}
+    },
+    {
+      "parameters": {
+        "operation": "sendAudio",
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "binaryData": true,
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        736,
+        -400
+      ],
+      "id": "c401145e-675e-4005-aff0-cd5ff6a8d270",
+      "name": "Send an audio file",
+      "webhookId": "e26a3316-eac5-4262-bf15-c85b5f8dc105"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "667ca354-cc10-40fe-896b-08153fad7857",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -160,
+        64
+      ],
+      "id": "dbeb276a-8fc2-4cec-bccf-5da4c6efb25f",
+      "name": "Webhook",
+      "webhookId": "667ca354-cc10-40fe-896b-08153fad7857"
+    },
+    {
+      "parameters": {
+        "messages": {
+          "message": [
+            {
+              "content": "={{ $json.body.searchQuery }}"
+            }
+          ]
+        },
+        "simplify": true,
+        "options": {},
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-base.perplexity",
+      "typeVersion": 1,
+      "position": [
+        0,
+        64
+      ],
+      "id": "04af5fea-aadf-4c99-a611-55eef9d007da",
+      "name": "Message a model"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.message }}",
+        "options": {
+          "systemMessage": "=# Overview\nYou are an expert research agent. You will be fed information, and you need to make a concise summary. It should only be about three sentences. "
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        144,
+        64
+      ],
+      "id": "c7050d65-5a6d-4bf8-a66f-268fb81fab95",
+      "name": "AI Agent1"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        144,
+        208
+      ],
+      "id": "68e5c788-7ea5-493e-88f5-941ebe3c038e",
+      "name": "OpenRouter Chat Model1"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        464,
+        64
+      ],
+      "id": "bd18762d-5280-4693-ab86-6380e3052cd8",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "content": "# Telegram Voice Output ",
+        "height": 400,
+        "width": 1216,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -272,
+        -496
+      ],
+      "id": "47e88fef-e88d-47a6-a94d-87b4973e9e25",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "# ElevenLabs Conversational Agent\n",
+        "height": 400,
+        "width": 1232,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -272,
+        -64
+      ],
+      "id": "fee9bf13-1a07-4654-804c-9bb73008947e",
+      "name": "Sticky Note1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get a file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a file": {
+      "main": [
+        [
+          {
+            "node": "Transcribe audio or video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Transcribe audio or video": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Convert text to speech",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert text to speech": {
+      "main": [
+        [
+          {
+            "node": "Send an audio file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent1": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "6ebb97c8-d8cf-4cbd-bae6-dabf194d4258",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "6baf929f52490e6b0bf642251c8347d6341974bff88abcf1dce45488f15e3ba0"
+  },
+  "id": "syJPTJiG3OTHL4mr",
+  "tags": []
+}
